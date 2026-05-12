@@ -1,21 +1,12 @@
-4
-Anthony Marston
-0
-Mrs Rogers
-1
-General Macarthur
-1
-Mr Rogers
-1
-Emily Brent
-1
-Judge Wargrave
-1
-Dr Armstrong
-1
-William Blore
-1
-Philip Lombard
-1
-Vera Claythorne
-1
+Chapter: 3
+---
+Anthony Marston: ALIVE
+Mrs Rogers: ALIVE
+General Macarthur: ALIVE
+Mr Rogers: ALIVE
+Emily Brent: ALIVE
+Judge Wargrave: ALIVE
+Dr Armstrong: ALIVE
+William Blore: ALIVE
+Philip Lombard: ALIVE
+Vera Claythorne: ALIVE

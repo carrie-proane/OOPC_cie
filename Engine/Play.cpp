@@ -245,14 +245,14 @@ void Game::saveGame()
 {
     const string savePath = getSaveFilePath();
     ofstream file(savePath);
-
     if(!file)
     {
         cout << "Save file could not be created." << endl;
         return;
     }
 
-    file << currentChapter << endl;
+    file << "Chapter: " << currentChapter << endl;
+    file << "---" << endl;
 
     for(int i = 0; i < 10; i++)
     {
@@ -260,7 +260,6 @@ void Game::saveGame()
     }
 
     file.close();
-
     cout << endl;
     cout << "Game saved in SaveFile.txt" << endl;
 }
@@ -269,7 +268,6 @@ bool Game::loadGame()
 {
     const string savePath = getSaveFilePath();
     ifstream file(savePath);
-
     if(!file)
     {
         cout << endl;
@@ -277,8 +275,12 @@ bool Game::loadGame()
         return false;
     }
 
-    file >> currentChapter;
-    file.ignore();
+    string chapterLine;
+    getline(file, chapterLine);
+    currentChapter = stoi(chapterLine.substr(9)); // skips "Chapter: "
+    
+    string divider;
+    getline(file, divider);
 
     for(int i = 0; i < 10; i++)
     {
@@ -286,11 +288,9 @@ bool Game::loadGame()
     }
 
     file.close();
-
     cout << endl;
     cout << "Saved game loaded successfully." << endl;
     return true;
-
 }
 
 void Game::showSurvivors()

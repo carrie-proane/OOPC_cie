@@ -61,13 +61,16 @@ void Character::showStatus() const
 
 void Character::saveCharacter(ofstream& file) const
 {
-    file << name << endl;
-    file << alive << endl;
+    file << name << ": " << (alive ? "ALIVE" : "DEAD") << endl;
 }
 
 void Character::loadCharacter(ifstream& file)
 {
-    getline(file, name);
-    file >> alive;
-    file.ignore();
+    string line;
+    getline(file, line);
+
+    // Split "Anthony Marston: DEAD" into name and status
+    size_t colonPos = line.find(": ");
+    name  = line.substr(0, colonPos);
+    alive = (line.substr(colonPos + 2) == "ALIVE");
 }
