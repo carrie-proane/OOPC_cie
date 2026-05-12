@@ -1,9 +1,10 @@
 #include "Character.h"
 
-Character::Character()
+Character::Character(string n, string c)
 {
+    name = n;
     alive = true;
-    colorCode = "\033[0m";
+    colorCode = c;
 }
 
 void Character::setCharacter(string n)
@@ -16,17 +17,17 @@ void Character::setColor(string c)
     colorCode = c;
 }
 
-string Character::getName()
+string Character::getName() const
 {
     return name;
 }
 
-string Character::getColor()
+string Character::getColor() const
 {
     return colorCode;
 }
 
-bool Character::isAlive()
+bool Character::isAlive() const
 {
     return alive;
 }
@@ -36,12 +37,12 @@ void Character::killCharacter()
     alive = false;
 }
 
-void Character::speak()
+void Character::speak() const
 {
     cout << name << ": Something feels wrong here." << endl;
 }
 
-void Character::showStatus()
+void Character::showStatus() const
 {
     cout << colorCode;
     cout << "| ";
@@ -58,7 +59,7 @@ void Character::showStatus()
     cout << name << "\033[0m" << endl;
 }
 
-void Character::saveCharacter(ofstream& file)
+void Character::saveCharacter(ofstream& file) const
 {
     file << name << endl;
     file << alive << endl;

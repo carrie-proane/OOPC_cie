@@ -11,7 +11,7 @@ void typeText(string text)
     {
         cout<< c <<flush;
 
-        this_thread::sleep_for(chrono::milliseconds(25));
+        this_thread::sleep_for(chrono::milliseconds(10));
     }
 
     cout << endl;

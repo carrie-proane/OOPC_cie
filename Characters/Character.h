@@ -13,27 +13,28 @@ protected:
     string colorCode;
 
 public:
-    Character();
+    Character(string n = "", string c = "\033[0m");
+    virtual ~Character() = default;
 
     void setCharacter(string n);
 
     void setColor(string c);
 
-    string getName();
+    string getName() const;
 
-    string getColor();
+    string getColor() const;
 
-    bool isAlive();
+    bool isAlive() const;
 
     void killCharacter();
 
-    virtual void speak();
+    virtual void speak() const;
 
-    void showStatus();
+    virtual void showStatus() const;
 
-    void saveCharacter(ofstream& file);
+    virtual void saveCharacter(ofstream& file) const;
 
-    void loadCharacter(ifstream& file);
+    virtual void loadCharacter(ifstream& file);
 };
 
 #endif

@@ -2,12 +2,25 @@
 #define GAME_H
 
 #include "../Characters/Character.h"
+#include "StoryChapter.h"
+#include <array>
+#include <memory>
+#include <string>
 
 class Game
 {
 private:
-    Character characters[10];
+    array<unique_ptr<Character>, 10> characters;
+    array<unique_ptr<StoryChapter>, 14> chapters;
     int currentChapter;
+
+    void buildChapters();
+
+    Character& getCharacter(int index);
+
+    const Character& getCharacter(int index) const;
+
+    string getChapterColor(int chapterNumber) const;
 
     void playGame();
 
@@ -18,6 +31,8 @@ private:
     bool loadGame();
 
 public:
+    Game();
+
     void startGame();
 
     void setupCharacters();

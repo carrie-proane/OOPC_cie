@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "../Utils/TextEffects.h"
 #include <fstream>
+#include <filesystem>
 
 namespace
 {
@@ -8,62 +9,113 @@ namespace
     const string ACCUSATION_COLOR = "\033[1;33m";
     const string FEAR_COLOR = "\033[1;31m";
     const string END_COLOR = "\033[1;37m";
+    const string SAVE_FILE_NAME = "SaveFile.txt";
 
-    string getChapterColor(int chapterNumber, Character characters[])
+    string getSaveFilePath()
     {
-        if(chapterNumber == 1)
-            return OCEAN_COLOR;
-        else if(chapterNumber == 2)
-            return ACCUSATION_COLOR;
-        else if(chapterNumber == 3)
-            return characters[0].getColor();
-        else if(chapterNumber == 4)
-            return FEAR_COLOR;
-        else if(chapterNumber == 5)
-            return characters[1].getColor();
-        else if(chapterNumber == 6)
-            return characters[2].getColor();
-        else if(chapterNumber == 7)
-            return characters[3].getColor();
-        else if(chapterNumber == 8)
-            return characters[4].getColor();
-        else if(chapterNumber == 9)
-            return characters[5].getColor();
-        else if(chapterNumber == 10)
-            return characters[6].getColor();
-        else if(chapterNumber == 11)
-            return characters[7].getColor();
-        else if(chapterNumber == 12)
-            return characters[8].getColor();
-        else if(chapterNumber == 13)
-            return characters[9].getColor();
-        else
-            return END_COLOR;
+        try
+        {
+            std::filesystem::path exePath = std::filesystem::read_symlink("/proc/self/exe");
+            return (exePath.parent_path() / SAVE_FILE_NAME).string();
+        }
+        catch(...)
+        {
+            return SAVE_FILE_NAME;
+        }
     }
+
+    struct GuestInfo
+    {
+        const char* name;
+        const char* color;
+    };
+}
+
+Game::Game() : currentChapter(1)
+{
+    buildChapters();
+}
+
+void Game::buildChapters()
+{
+    chapters[0] = make_unique<ScriptedChapter>(&Game::chapter1);
+    chapters[1] = make_unique<ScriptedChapter>(&Game::chapter2);
+    chapters[2] = make_unique<ScriptedChapter>(&Game::chapter3);
+    chapters[3] = make_unique<ScriptedChapter>(&Game::chapter4);
+    chapters[4] = make_unique<ScriptedChapter>(&Game::chapter5);
+    chapters[5] = make_unique<ScriptedChapter>(&Game::chapter6);
+    chapters[6] = make_unique<ScriptedChapter>(&Game::chapter7);
+    chapters[7] = make_unique<ScriptedChapter>(&Game::chapter8);
+    chapters[8] = make_unique<ScriptedChapter>(&Game::chapter9);
+    chapters[9] = make_unique<ScriptedChapter>(&Game::chapter10);
+    chapters[10] = make_unique<ScriptedChapter>(&Game::chapter11);
+    chapters[11] = make_unique<ScriptedChapter>(&Game::chapter12);
+    chapters[12] = make_unique<ScriptedChapter>(&Game::chapter13);
+    chapters[13] = make_unique<ScriptedChapter>(&Game::chapter14);
+}
+
+Character& Game::getCharacter(int index)
+{
+    return *characters[index];
+}
+
+const Character& Game::getCharacter(int index) const
+{
+    return *characters[index];
+}
+
+string Game::getChapterColor(int chapterNumber) const
+{
+    if(chapterNumber == 1)
+        return OCEAN_COLOR;
+    else if(chapterNumber == 2)
+        return ACCUSATION_COLOR;
+    else if(chapterNumber == 3)
+        return getCharacter(0).getColor();
+    else if(chapterNumber == 4)
+        return FEAR_COLOR;
+    else if(chapterNumber == 5)
+        return getCharacter(1).getColor();
+    else if(chapterNumber == 6)
+        return getCharacter(2).getColor();
+    else if(chapterNumber == 7)
+        return getCharacter(3).getColor();
+    else if(chapterNumber == 8)
+        return getCharacter(4).getColor();
+    else if(chapterNumber == 9)
+        return getCharacter(5).getColor();
+    else if(chapterNumber == 10)
+        return getCharacter(6).getColor();
+    else if(chapterNumber == 11)
+        return getCharacter(7).getColor();
+    else if(chapterNumber == 12)
+        return getCharacter(8).getColor();
+    else if(chapterNumber == 13)
+        return getCharacter(9).getColor();
+    else
+        return END_COLOR;
 }
 
 void Game::setupCharacters()
 {
-    characters[0].setCharacter("Anthony Marston");
-    characters[0].setColor("\033[1;36m");
-    characters[1].setCharacter("Mrs Rogers");
-    characters[1].setColor("\033[1;33m");
-    characters[2].setCharacter("General Macarthur");
-    characters[2].setColor("\033[1;32m");
-    characters[3].setCharacter("Mr Rogers");
-    characters[3].setColor("\033[1;31m");
-    characters[4].setCharacter("Emily Brent");
-    characters[4].setColor("\033[1;35m");
-    characters[5].setCharacter("Judge Wargrave");
-    characters[5].setColor("\033[1;37m");
-    characters[6].setCharacter("Dr Armstrong");
-    characters[6].setColor("\033[1;34m");
-    characters[7].setCharacter("William Blore");
-    characters[7].setColor("\033[0;36m");
-    characters[8].setCharacter("Philip Lombard");
-    characters[8].setColor("\033[0;33m");
-    characters[9].setCharacter("Vera Claythorne");
-    characters[9].setColor("\033[0;35m");
+    const GuestInfo guestData[10] =
+    {
+        {"Anthony Marston", "\033[1;36m"},
+        {"Mrs Rogers", "\033[1;33m"},
+        {"General Macarthur", "\033[1;32m"},
+        {"Mr Rogers", "\033[1;31m"},
+        {"Emily Brent", "\033[1;35m"},
+        {"Judge Wargrave", "\033[1;37m"},
+        {"Dr Armstrong", "\033[1;34m"},
+        {"William Blore", "\033[0;36m"},
+        {"Philip Lombard", "\033[0;33m"},
+        {"Vera Claythorne", "\033[0;35m"}
+    };
+
+    for(int i = 0; i < 10; i++)
+    {
+        characters[i] = make_unique<Character>(guestData[i].name, guestData[i].color);
+    }
 }
 
 void Game::startGame()
@@ -133,35 +185,7 @@ void Game::playGame()
     while(currentChapter <= 14)
     {
         clearScreen();
-
-        if(currentChapter == 1)
-            chapter1();
-        else if(currentChapter == 2)
-            chapter2();
-        else if(currentChapter == 3)
-            chapter3();
-        else if(currentChapter == 4)
-            chapter4();
-        else if(currentChapter == 5)
-            chapter5();
-        else if(currentChapter == 6)
-            chapter6();
-        else if(currentChapter == 7)
-            chapter7();
-        else if(currentChapter == 8)
-            chapter8();
-        else if(currentChapter == 9)
-            chapter9();
-        else if(currentChapter == 10)
-            chapter10();
-        else if(currentChapter == 11)
-            chapter11();
-        else if(currentChapter == 12)
-            chapter12();
-        else if(currentChapter == 13)
-            chapter13();
-        else if(currentChapter == 14)
-            chapter14();
+        chapters[currentChapter - 1]->play(*this);
 
         if(currentChapter == 14)
         {
@@ -219,7 +243,8 @@ bool Game::showChapterOptions()
 
 void Game::saveGame()
 {
-    ofstream file("SaveFile.txt");
+    const string savePath = getSaveFilePath();
+    ofstream file(savePath);
 
     if(!file)
     {
@@ -231,7 +256,7 @@ void Game::saveGame()
 
     for(int i = 0; i < 10; i++)
     {
-        characters[i].saveCharacter(file);
+        getCharacter(i).saveCharacter(file);
     }
 
     file.close();
@@ -242,7 +267,8 @@ void Game::saveGame()
 
 bool Game::loadGame()
 {
-    ifstream file("SaveFile.txt");
+    const string savePath = getSaveFilePath();
+    ifstream file(savePath);
 
     if(!file)
     {
@@ -256,7 +282,7 @@ bool Game::loadGame()
 
     for(int i = 0; i < 10; i++)
     {
-        characters[i].loadCharacter(file);
+        getCharacter(i).loadCharacter(file);
     }
 
     file.close();
@@ -273,13 +299,13 @@ void Game::showSurvivors()
 
     for(int i = 0; i < 10; i++)
     {
-        characters[i].showStatus();
+        getCharacter(i).showStatus();
     }
 }
 
 void Game::chapter1()
 {
-    cout << getChapterColor(1, characters);
+    cout << getChapterColor(1);
     showHeading("CHAPTER 1 - SOLDIER ISLAND");
 
     typeText("The sea crashes violently against the rocks.");
@@ -293,7 +319,7 @@ void Game::chapter1()
 
 void Game::chapter2()
 {
-    cout << getChapterColor(2, characters);
+    cout << getChapterColor(2);
     showHeading("CHAPTER 2 - THE ACCUSATION");
 
     typeText("Dinner begins quietly.");
@@ -309,7 +335,7 @@ void Game::chapter2()
 
 void Game::chapter3()
 {
-    cout << getChapterColor(3, characters);
+    cout << getChapterColor(3);
     showHeading("CHAPTER 3 - THE FIRST DEATH");
 
     typeText("~~One choked his little self and then there were nine~~");
@@ -323,7 +349,7 @@ void Game::chapter3()
     typeText("The glass falls from his hand.");
     typeText("He collapses to the floor.");
 
-    characters[0].killCharacter();
+    getCharacter(0).killCharacter();
 
     showSurvivors();
 
@@ -333,7 +359,7 @@ void Game::chapter3()
 
 void Game::chapter4()
 {
-    cout << getChapterColor(4, characters);
+    cout << getChapterColor(4);
     showHeading("CHAPTER 4 - FEAR");
 
     typeText("The storm grows stronger.");
@@ -351,7 +377,7 @@ void Game::chapter4()
 
 void Game::chapter5()
 {
-    cout << getChapterColor(5, characters);
+    cout << getChapterColor(5);
     showHeading("CHAPTER 5 - THE SECOND DEATH");
 
     typeText("~~One overslept himself and then there were eight.~~");
@@ -388,7 +414,7 @@ void Game::chapter5()
 
     typeText("Fear spreads through the mansion.");
 
-    characters[1].killCharacter();
+    getCharacter(1).killCharacter();
 
     showSurvivors();
 
@@ -398,7 +424,7 @@ void Game::chapter5()
 
 void Game::chapter6()
 {
-    cout << getChapterColor(6, characters);
+    cout << getChapterColor(6);
     showHeading("CHAPTER 6 - THE THIRD DEATH");
 
     typeText("~~One said he'd stay there and then there were seven~~");
@@ -439,7 +465,7 @@ void Game::chapter6()
 
     typeText("The killer has struck again.");
 
-    characters[2].killCharacter();
+    getCharacter(2).killCharacter();
 
     showSurvivors();
 
@@ -449,7 +475,7 @@ void Game::chapter6()
 
 void Game::chapter7()
 {
-    cout << getChapterColor(7, characters);
+    cout << getChapterColor(7);
     showHeading("CHAPTER 7 - THE FOURTH DEATH");
     typeText("~~One chopped himself in halves and then there were six~~");
     typeText("The island feels completely isolated now.");
@@ -497,7 +523,7 @@ void Game::chapter7()
 
     typeText("\"Who will be next?\"");
 
-    characters[3].killCharacter();
+    getCharacter(3).killCharacter();
 
     showSurvivors();
 
@@ -507,7 +533,7 @@ void Game::chapter7()
 
 void Game::chapter8()
 {
-    cout << getChapterColor(8, characters);
+    cout << getChapterColor(8);
     showHeading("CHAPTER 8 - THE FIFTH DEATH");
 
     typeText("~~A bumblebee stung one and then there were five.~~");
@@ -557,7 +583,7 @@ void Game::chapter8()
 
     typeText("The killer is still waiting.");
 
-    characters[4].killCharacter();
+    getCharacter(4).killCharacter();
 
     showSurvivors();
 
@@ -569,7 +595,7 @@ void Game::chapter8()
 
 void Game::chapter9()
 {
-    cout << getChapterColor(9, characters);
+    cout << getChapterColor(9);
     showHeading("CHAPTER 9 - THE SIXTH DEATH");
 
     typeText("~~One got in Chancery and then there were four~~");
@@ -619,7 +645,7 @@ void Game::chapter9()
 
     typeText("Then nobody is safe anymore.");
 
-    characters[5].killCharacter();
+    getCharacter(5).killCharacter();
 
     showSurvivors();
 
@@ -631,7 +657,7 @@ void Game::chapter9()
 
 void Game::chapter10()
 {
-    cout << getChapterColor(10, characters);
+    cout << getChapterColor(10);
     showHeading("CHAPTER 10 - THE SEVENTH DEATH");
 
     typeText("~~A red herring swallowed one and then there were three~~");
@@ -682,7 +708,7 @@ void Game::chapter10()
 
     typeText("Only three remain.");
 
-    characters[6].killCharacter();
+    getCharacter(6).killCharacter();
 
     showSurvivors();
 
@@ -692,7 +718,7 @@ void Game::chapter10()
 
 void Game::chapter11()
 {
-    cout << getChapterColor(11, characters);
+    cout << getChapterColor(11);
     showHeading("CHAPTER 11 - THE EIGHTH DEATH");
 
     typeText("~~A big bear hugged one and then there were two~~");
@@ -742,7 +768,7 @@ void Game::chapter11()
 
     typeText("Only two survivors remain.");
 
-    characters[7].killCharacter();
+    getCharacter(7).killCharacter();
 
     showSurvivors();
 
@@ -752,7 +778,7 @@ void Game::chapter11()
 
 void Game::chapter12()
 {
-    cout << getChapterColor(12, characters);
+    cout << getChapterColor(12);
     showHeading("CHAPTER 12 - THE NINTH DEATH");
 
     typeText("~~One got frizzled up and then there was one~~");
@@ -809,7 +835,7 @@ void Game::chapter12()
 
     typeText("She is now alone.");
 
-    characters[8].killCharacter();
+    getCharacter(8).killCharacter();
 
     showSurvivors();
 
@@ -820,7 +846,7 @@ void Game::chapter12()
 
 void Game::chapter13()
 {
-    cout << getChapterColor(13, characters);
+    cout << getChapterColor(13);
     showHeading("CHAPTER 13 - THE FINAL DEATH");
 
     typeText("~~He went out and hanged himself and then there were none~~");
@@ -867,7 +893,7 @@ void Game::chapter13()
 
     typeText("And Soldier Island is finally empty.");
 
-    characters[9].killCharacter();
+    getCharacter(9).killCharacter();
 
     showSurvivors();
 
@@ -880,7 +906,7 @@ void Game::chapter13()
 
 void Game::chapter14()
 {
-    cout << getChapterColor(14, characters);
+    cout << getChapterColor(14);
     showHeading("CHAPTER 14 - EPILOGUE");
 
     
