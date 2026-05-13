@@ -5,6 +5,7 @@
 #include <fstream>
 using namespace std;
 
+
 class Character
 {
 protected:
@@ -13,28 +14,80 @@ protected:
     string colorCode;
 
 public:
-    Character(string n = "", string c = "\033[0m");
+    Character(); 
+    Character(string n, string c);
     virtual ~Character() = default;
 
-    void setCharacter(string n);
-
-    void setColor(string c);
-
     string getName() const;
-
     string getColor() const;
-
     bool isAlive() const;
 
     void killCharacter();
-
-    virtual void speak() const;
-
     virtual void showStatus() const;
 
     virtual void saveCharacter(ofstream& file) const;
-
     virtual void loadCharacter(ifstream& file);
+};
+
+
+class AnthonyMarston : public Character
+{
+public:
+    AnthonyMarston();
+};
+
+class MrsRogers : public Character
+{
+public:
+    MrsRogers();
+};
+
+class GeneralMacarthur : public Character
+{
+public:
+    GeneralMacarthur();
+};
+
+class MrRogers : public Character
+{
+public:
+    MrRogers();
+};
+
+class EmilyBrent : public Character
+{
+public:
+    EmilyBrent();
+};
+
+class JudgeWargrave : public Character
+{
+public:
+    JudgeWargrave();
+};
+
+class DrArmstrong : public Character
+{
+public:
+    DrArmstrong();
+};
+
+class WilliamBlore : public Character
+{
+public:
+    WilliamBlore();
+};
+
+class PhilipLombard : public Character
+{
+public:
+    PhilipLombard();
+};
+
+class VeraClaythorne : public Character
+{
+public:
+    VeraClaythorne();
 };
 
 #endif

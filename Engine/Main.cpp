@@ -1,8 +1,8 @@
-#include "Game.h"
+#include "Play.h"
 
 int main()
 {
-    Game game;
+    Play game;
 
     game.startGame();
 
